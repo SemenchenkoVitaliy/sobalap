@@ -12,9 +12,15 @@ RenderArea::RenderArea(QWidget *parent)
 
 RenderArea::~RenderArea() {
   foreach (auto shape, shapes) delete shape;
+  foreach (auto shape, redoStack) delete shape;
 }
 
 void RenderArea::onMousePress(QMouseEvent *e) {
+  redoStack.clear();
+  redoFlag = false;
+  emit redoEnabled(false);
+  emit undoEnabled(true);
+
   QPoint mousePos = mapFromGlobal(e->globalPos());
   if (!draw) {
     draw = true;
@@ -37,7 +43,27 @@ void RenderArea::closeShape() {
 
 void RenderArea::undo() {
   if (shapes.isEmpty()) return;
-  delete shapes.last();
+  if (redoFlag) redoStack.clear();
+  redoFlag = false;
+  emit redoEnabled(true);
+
+  auto pShape = shapes.takeLast();
+  if (shapes.isEmpty()) emit undoEnabled(false);
+  int shapeElementCount = pShape->elementCount();
+  auto shapeElement = pShape->elementAt(shapeElementCount - 1);
+  if (!shapeElement.isMoveTo()) pShape->closeSubpath();
+  redoStack.push_back(pShape);
+  draw = false;
+  update();
+}
+
+void RenderArea::redo() {
+  if (redoStack.isEmpty()) return;
+  redoFlag = true;
+  auto pShape = redoStack.takeLast();
+  if (redoStack.isEmpty()) emit redoEnabled(false);
+  shapes.push_back(pShape);
+  emit undoEnabled(true);
   draw = false;
   update();
 }

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVector>
+#include <QStack>
 #include <QPainterPath>
 
 class RenderArea : public QWidget {
@@ -16,6 +17,11 @@ class RenderArea : public QWidget {
   void onMousePress(QMouseEvent *e);
   void closeShape();
   void undo();
+  void redo();
+
+ signals:
+  void redoEnabled(bool);
+  void undoEnabled(bool);
 
  protected:
   void paintEvent(QPaintEvent *e);
@@ -23,7 +29,9 @@ class RenderArea : public QWidget {
 
  private:
   QVector<QPainterPath *> shapes;
+  QVector<QPainterPath *> redoStack;
   bool draw;
+  bool redoFlag;
 };
 
 #endif // RENDERAREA_H_

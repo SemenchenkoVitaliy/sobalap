@@ -25,8 +25,11 @@ class MainWindow : public QMainWindow {
   void createMenu();
 
   QMenu *palabosMenu;
-  RenderArea *renderArea;
+  QMenu *editMenu;
   QAction *calculateAction;
+  QAction *undoAction;
+  QAction *redoAction;
+  RenderArea *renderArea;
   CalculateDialog *calculateDlg;
 };
 
