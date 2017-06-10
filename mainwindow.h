@@ -20,7 +20,12 @@ class MainWindow : public QMainWindow {
   void calculate();
 
  private:
+  void createActions();
+  void createMenu();
+
+  QMenu *palabosMenu;
   RenderArea *renderArea;
+  QAction *calculateAction;
 };
 
 #endif // MAINWINDOW_H_

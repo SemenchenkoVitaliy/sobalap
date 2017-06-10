@@ -4,6 +4,8 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QAction>
+#include <QMenuBar>
+#include <QMenu>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent) {
@@ -13,12 +15,11 @@ MainWindow::MainWindow(QWidget *parent)
   renderArea->setMinimumSize(600, 500);
   renderArea->setMaximumSize(600, 500);
 
-  QPushButton *calculateBtn = new QPushButton("Calculate", this);
-  connect(calculateBtn, SIGNAL(released()), this, SLOT(calculate()));
+  createActions();
+  createMenu();
 
   QGridLayout *layout = new QGridLayout(this);
   layout->addWidget(renderArea);
-  layout->addWidget(calculateBtn);
 
   centralWidget->setLayout(layout);
   this->setCentralWidget(centralWidget);
@@ -31,6 +32,16 @@ void MainWindow::calculate() {
   QMessageBox::information(this, "Test", "There is should be input data");
 }
 
+void MainWindow::createActions() {
+  calculateAction = new QAction("Calculate", this);
+  connect(calculateAction, SIGNAL(triggered()), this, SLOT(calculate()));
+}
+
+void MainWindow::createMenu() {
+  palabosMenu = menuBar()->addMenu("Palabos");
+  palabosMenu->addAction(calculateAction);
+}
+
 void MainWindow::mousePressEvent(QMouseEvent *e) {
   if (e->button() == Qt::LeftButton) {
     renderArea->onMousePress(e);
@@ -39,7 +50,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e) {
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *e) {
-  renderArea->onMouseMove(e);
+  //renderArea->onMouseMove(e);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e) {
