@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="radioGroup">
      <property name="title">
-      <string/>
+      <string>Choose input parameter:</string>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -80,20 +80,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>190</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -102,6 +89,39 @@
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="timeLabel">
+     <property name="text">
+      <string>Flow time:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="intervalLabel">
+     <property name="text">
+      <string>Interval:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="timeEdit"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="intervalEdit"/>
+   </item>
+   <item row="6" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

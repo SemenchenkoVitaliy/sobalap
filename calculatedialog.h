@@ -16,6 +16,8 @@ class CalculateDialog : public QDialog {
   QString getVelocityInput() const;
   QString getDirectionInput() const;
   QString getPressureInput() const;
+  QString getTimeInput() const;
+  QString getIntervalInput() const;
   void resetInput();
 
  private slots:

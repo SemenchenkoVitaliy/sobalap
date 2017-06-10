@@ -35,8 +35,18 @@ QString CalculateDialog::getPressureInput() const {
   return ui->presureEdit->text();
 }
 
+QString CalculateDialog::getTimeInput() const {
+  return ui->timeEdit->text();
+}
+
+QString CalculateDialog::getIntervalInput() const {
+  return ui->intervalEdit->text();
+}
+
 void CalculateDialog::resetInput() {
   ui->velocityEdit->clear();
   ui->presureEdit->clear();
   ui->directionEdit->clear();
+  ui->timeEdit->clear();
+  ui->intervalEdit->clear();
 }
