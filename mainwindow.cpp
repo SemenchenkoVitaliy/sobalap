@@ -6,14 +6,17 @@
 #include <QAction>
 #include <QMenuBar>
 #include <QMenu>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent) {
   QWidget *centralWidget = new QWidget(this);
 
   renderArea = new RenderArea(this);
-  renderArea->setMinimumSize(600, 500);
-  renderArea->setMaximumSize(600, 500);
+  renderArea->setMinimumSize(800, 600);
+  renderArea->setMaximumSize(800, 600);
+
+  calculateDlg = new CalculateDialog(this);
 
   createActions();
   createMenu();
@@ -28,8 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() { }
 
 void MainWindow::calculate() {
-  // TODO: Call dialog with speed or pressure
-  QMessageBox::information(this, "Test", "There is should be input data");
+  calculateDlg->resetInput();
+  calculateDlg->exec();
+
+  // TODO: check and send inputs to palabos, if dlg return OK
 }
 
 void MainWindow::createActions() {

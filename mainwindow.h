@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "renderarea.h"
+#include "calculatedialog.h"
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -26,6 +27,7 @@ class MainWindow : public QMainWindow {
   QMenu *palabosMenu;
   RenderArea *renderArea;
   QAction *calculateAction;
+  CalculateDialog *calculateDlg;
 };
 
 #endif // MAINWINDOW_H_
