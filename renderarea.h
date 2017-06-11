@@ -18,6 +18,9 @@ class RenderArea : public QWidget {
   void closeShape();
   void undo();
   void redo();
+  void chooseWallPainter();
+  void chooseInletPainter();
+  void chooseOutletPainter();
 
  signals:
   void redoEnabled(bool);
@@ -26,12 +29,23 @@ class RenderArea : public QWidget {
  protected:
   void paintEvent(QPaintEvent *e);
   void mouseMoveEvent(QMouseEvent *e);
+  void mouseReleaseEvent(QMouseEvent *e);
 
  private:
+  QPainterPath *startPath(QPainterPath *prevPath, const QPoint &pos);
+
+  enum ToolType {
+    WALL_PAINTER, // 0
+    INLET_PAINTER,
+    OUTLET_PAINTER
+  };
   QVector<QPainterPath *> shapes;
   QVector<QPainterPath *> redoStack;
-  bool draw;
+  QPainterPath *inlet;
+  QPainterPath *outlet;
+  bool isDrawingWall;
   bool redoFlag;
+  ToolType toolType;
 };
 
 #endif // RENDERAREA_H_

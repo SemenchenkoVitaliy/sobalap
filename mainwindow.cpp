@@ -52,6 +52,27 @@ void MainWindow::createActions() {
   redoAction->setEnabled(false);
   connect(redoAction, SIGNAL(triggered(bool)), renderArea, SLOT(redo()));
   connect(renderArea, SIGNAL(redoEnabled(bool)), redoAction, SLOT(setEnabled(bool)));
+
+  wallPainterAction = new QAction("Walls painter", this);
+  wallPainterAction->setCheckable(true);
+  connect(wallPainterAction, SIGNAL(triggered()), renderArea, SLOT(chooseWallPainter()));
+  connect(wallPainterAction, SIGNAL(triggered()), renderArea, SLOT(closeShape()));
+
+  inletPainterAction = new QAction("Inlet painter", this);
+  inletPainterAction->setCheckable(true);
+  connect(inletPainterAction, SIGNAL(triggered()), renderArea, SLOT(chooseInletPainter()));
+  connect(inletPainterAction, SIGNAL(triggered()), renderArea, SLOT(closeShape()));
+
+  outletPainterAction = new QAction("Outlet painter", this);
+  outletPainterAction->setCheckable(true);
+  connect(outletPainterAction, SIGNAL(triggered()), renderArea, SLOT(chooseOutletPainter()));
+  connect(outletPainterAction, SIGNAL(triggered()), renderArea, SLOT(closeShape()));
+
+  toolsActionGroup = new QActionGroup(this);
+  toolsActionGroup->addAction(wallPainterAction);
+  toolsActionGroup->addAction(inletPainterAction);
+  toolsActionGroup->addAction(outletPainterAction);
+  wallPainterAction->setChecked(true);
 }
 
 void MainWindow::createMenu() {
@@ -61,6 +82,11 @@ void MainWindow::createMenu() {
   editMenu = menuBar()->addMenu("Edit");
   editMenu->addAction(undoAction);
   editMenu->addAction(redoAction);
+
+  toolsMenu = menuBar()->addMenu("Tools");
+  toolsMenu->addAction(wallPainterAction);
+  toolsMenu->addAction(inletPainterAction);
+  toolsMenu->addAction(outletPainterAction);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e) {

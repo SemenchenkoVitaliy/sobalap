@@ -2,6 +2,7 @@
 #define MAINWINDOW_H_
 
 #include <QMainWindow>
+#include <QActionGroup>
 #include "renderarea.h"
 #include "calculatedialog.h"
 
@@ -26,6 +27,11 @@ class MainWindow : public QMainWindow {
 
   QMenu *palabosMenu;
   QMenu *editMenu;
+  QMenu *toolsMenu;
+  QActionGroup *toolsActionGroup;
+  QAction *wallPainterAction;
+  QAction *inletPainterAction;
+  QAction *outletPainterAction;
   QAction *calculateAction;
   QAction *undoAction;
   QAction *redoAction;

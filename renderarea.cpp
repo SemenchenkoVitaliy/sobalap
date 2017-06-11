@@ -6,7 +6,8 @@
 #include <QMouseEvent>
 
 RenderArea::RenderArea(QWidget *parent)
-  : QWidget(parent), draw(false) {
+  : QWidget(parent), isDrawingWall(false), redoFlag(false),
+    toolType(WALL_PAINTER) {
 
 }
 
@@ -22,14 +23,34 @@ void RenderArea::onMousePress(QMouseEvent *e) {
   emit undoEnabled(true);
 
   QPoint mousePos = mapFromGlobal(e->globalPos());
-  if (!draw) {
-    draw = true;
-    shapes.push_back(new QPainterPath(mousePos));
-    e->accept();
-    return;
+  switch (toolType) {
+    case WALL_PAINTER: {
+      foreach (auto pShape, shapes) {
+        if (pShape->contains(mousePos)) return;
+      }
+      if (!isDrawingWall) {
+        isDrawingWall = true;
+        shapes.push_back(new QPainterPath(mousePos));
+        e->accept();
+        return;
+      }
+      QPainterPath *shape = shapes.last();
+      shape->lineTo(mousePos);
+      break;
+    }
+    case INLET_PAINTER: {
+      inlet = startPath(inlet, mousePos);
+      if (!inlet) return;
+      shapes.push_back(inlet);
+      break;
+    }
+    case OUTLET_PAINTER: {
+      outlet = startPath(outlet, mousePos);
+      if (!outlet) return;
+      shapes.push_back(outlet);
+      break;
+    }
   }
-  QPainterPath *shape = shapes.last();
-  shape->lineTo(mousePos);
   update();
   e->accept();
 }
@@ -37,7 +58,7 @@ void RenderArea::onMousePress(QMouseEvent *e) {
 void RenderArea::closeShape() {
   if (shapes.isEmpty()) return;
   shapes.last()->closeSubpath();
-  draw = false;
+  isDrawingWall = false;
   update();
 }
 
@@ -53,7 +74,7 @@ void RenderArea::undo() {
   auto shapeElement = pShape->elementAt(shapeElementCount - 1);
   if (!shapeElement.isMoveTo()) pShape->closeSubpath();
   redoStack.push_back(pShape);
-  draw = false;
+  isDrawingWall = false;
   update();
 }
 
@@ -64,8 +85,20 @@ void RenderArea::redo() {
   if (redoStack.isEmpty()) emit redoEnabled(false);
   shapes.push_back(pShape);
   emit undoEnabled(true);
-  draw = false;
+  isDrawingWall = false;
   update();
+}
+
+void RenderArea::chooseWallPainter() {
+  toolType = WALL_PAINTER;
+}
+
+void RenderArea::chooseInletPainter() {
+  toolType = INLET_PAINTER;
+}
+
+void RenderArea::chooseOutletPainter() {
+  toolType = OUTLET_PAINTER;
 }
 
 void RenderArea::paintEvent(QPaintEvent *e) {
@@ -73,8 +106,14 @@ void RenderArea::paintEvent(QPaintEvent *e) {
   QPainter painter(this);
   painter.fillRect(this->rect(), workspaceColor);
 
-  painter.setBrush(Qt::green);
   foreach (auto pShape, shapes) {
+    if (pShape == inlet) {
+      painter.setBrush(Qt::red);
+    } else if (pShape == outlet) {
+      painter.setBrush(Qt::yellow);
+    } else {
+      painter.setBrush(Qt::blue);
+    }
     painter.drawPath(*pShape);
   }
 
@@ -89,4 +128,59 @@ void RenderArea::mouseMoveEvent(QMouseEvent *e) {
 //  auto pShape = shapes.last();
 //  painter.drawLine(pShape->currentPosition(), mousePos);
 //  update();
+}
+
+void RenderArea::mouseReleaseEvent(QMouseEvent *e) {
+  if (toolType == WALL_PAINTER) return;
+  QPainterPath *currentShape;
+  if (toolType == INLET_PAINTER) {
+    currentShape = inlet;
+  } else {
+    currentShape = outlet;
+  }
+  if (!currentShape) return;
+
+  QPoint mousePos = mapFromGlobal(e->globalPos());
+  int topLeftX = currentShape->elementAt(0).x;
+  int topLeftY = currentShape->elementAt(0).y;
+  QRect rect(QPoint(topLeftX, topLeftY), mousePos);
+
+  foreach (auto pShape, shapes) {
+    if (pShape == currentShape) continue;
+    if (pShape->intersects(rect)) {
+      if (currentShape) {
+        shapes.removeOne(currentShape);
+        if (toolType == INLET_PAINTER) {
+          delete inlet;
+          inlet = nullptr;
+        } else {
+          delete outlet;
+          outlet = nullptr;
+        }
+      }
+      return;
+    }
+  }
+  currentShape->lineTo(rect.topRight());
+  currentShape->lineTo(rect.bottomRight());
+  currentShape->lineTo(rect.bottomLeft());
+  currentShape->lineTo(rect.topLeft());
+  update();
+  e->accept();
+}
+
+QPainterPath *RenderArea::startPath(QPainterPath *prevPath, const QPoint &pos) {
+  QPainterPath *temp = new QPainterPath(pos);
+  foreach (auto pShape, shapes) {
+    if (pShape->contains(pos)) {
+      delete temp;
+      temp = nullptr;
+      break;
+    }
+  }
+  if (prevPath) {
+    shapes.removeOne(prevPath);
+    delete prevPath;
+  }
+  return temp;
 }
