@@ -6,12 +6,17 @@
 #include <QStack>
 #include <QPainterPath>
 
+class ElementsMetaData;
+
 class RenderArea : public QWidget {
   Q_OBJECT
 
  public:
   explicit RenderArea(QWidget *parent = 0);
   ~RenderArea();
+  bool hasInlet() const;
+  bool hasOutlet() const;
+  bool hasTrackingPoint() const;
 
  public slots:
   void onMousePress(QMouseEvent *e);
@@ -50,6 +55,44 @@ class RenderArea : public QWidget {
   bool isDrawingWall;
   bool redoFlag;
   ToolType toolType;
+
+  friend ElementsMetaData;
+};
+
+class ElementsMetaData {
+ public:
+
+  struct Point {
+    int x;
+    int y;
+  };
+
+  struct Rect {
+    Point topLeft;
+    Point bottomRight;
+  };
+
+  ElementsMetaData(const RenderArea &renderArea, double time, double interval);
+  bool contains(int x, int y);
+  double getTime() const;
+  double getInterval() const;
+  Point getTrackingPoint() const;
+  Rect getInletRect() const;
+  Rect getOutletRect() const;
+
+ private:
+  void setTrackingPoint(const RenderArea &area);
+  QRect validateRect(const QPainterPath *path);
+  void validatePoint(QPoint &point);
+  Rect convertRect(const QRect &rect) const;
+
+  QPainterPath *walls;
+  QRect inlet;
+  QRect outlet;
+  QPoint trackingPoint;
+  double time;
+  double interval;
+  QSize areaSize;
 };
 
 #endif // RENDERAREA_H_

@@ -32,9 +32,41 @@ MainWindow::~MainWindow() { }
 
 void MainWindow::calculate() {
   calculateDlg->resetInput();
-  calculateDlg->exec();
+  int dialogResult = calculateDlg->exec();
+  if (dialogResult != QDialog::Accepted) return;
 
-  // TODO: check and send inputs to palabos, if dlg return OK
+  if (!renderArea->hasInlet()) {
+    QMessageBox::critical(this, "Error",
+                          "No inlet area. Please, set the inlet area");
+    return;
+  } else if (!renderArea->hasOutlet()) {
+    QMessageBox::critical(this, "Error",
+                          "No outlet area. Please, set the outlet area");
+    return;
+  } else if (!renderArea->hasTrackingPoint()) {
+    QMessageBox::critical(this, "Error",
+                          "No track point. Please, set the track point");
+    return;
+  }
+
+  double time = calculateDlg->getTimeInput().toDouble();
+  if (!time) {
+    QMessageBox::critical(this, "Error",
+                          "Incorrect entered time");
+    return;
+  }
+  double interval = calculateDlg->getIntervalInput().toDouble();
+  if (!interval || interval > time) {
+    QMessageBox::critical(this, "Error",
+                          "Incorrect entered interval");
+    return;
+  }
+
+  ElementsMetaData data(*renderArea, time, interval);
+  qDebug() << "Time: " << data.getTime() << "\t" << "Interval: " << data.getInterval();
+  qDebug() << "Point x = " << data.getTrackingPoint().x << "\t" << "y = " << data.getTrackingPoint().y;
+
+  // TODO: Send data to palabos
 }
 
 void MainWindow::createActions() {

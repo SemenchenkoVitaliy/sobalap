@@ -16,6 +16,18 @@ RenderArea::~RenderArea() {
   foreach (auto shape, redoStack) delete shape;
 }
 
+bool RenderArea::hasInlet() const {
+  return shapes.contains(inlet);
+}
+
+bool RenderArea::hasOutlet() const {
+  return shapes.contains(outlet);
+}
+
+bool RenderArea::hasTrackingPoint() const {
+  return shapes.contains(trackingEllipse);
+}
+
 void RenderArea::onMousePress(QMouseEvent *e) {
   redoStack.clear();
   redoFlag = false;
@@ -135,13 +147,7 @@ void RenderArea::paintEvent(QPaintEvent *e) {
 }
 
 void RenderArea::mouseMoveEvent(QMouseEvent *e) {
-//  if (!draw) return;
-//  QPainter painter(this);
-
-//  QPoint mousePos = mapFromGlobal(e->globalPos());
-//  auto pShape = shapes.last();
-//  painter.drawLine(pShape->currentPosition(), mousePos);
-//  update();
+  // TODO: shadowy
 }
 
 void RenderArea::mouseReleaseEvent(QMouseEvent *e) {
@@ -199,4 +205,81 @@ QPainterPath *RenderArea::startPath(QPainterPath *prevPath, const QPoint &pos) {
     delete prevPath;
   }
   return temp;
+}
+
+
+ElementsMetaData::ElementsMetaData(const RenderArea &renderArea, double time, double interval) {
+  this->time = time;
+  this->interval = interval;
+  this->areaSize = renderArea.size();
+  foreach (auto pShape, renderArea.shapes) {
+    if (pShape == renderArea.inlet) {
+      inlet = validateRect(pShape);
+    } else if (pShape == renderArea.outlet) {
+      outlet = validateRect(pShape);
+    } else if (pShape == renderArea.trackingEllipse) {
+      setTrackingPoint(renderArea);
+    } else {
+      walls->addPath(*pShape);
+    }
+  }
+}
+
+bool ElementsMetaData::contains(int x, int y) {
+  return walls->contains(QPoint(x, areaSize.height() - y));
+}
+
+double ElementsMetaData::getTime() const {
+  return time;
+}
+
+double ElementsMetaData::getInterval() const {
+  return interval;
+}
+
+ElementsMetaData::Point ElementsMetaData::getTrackingPoint() const {
+  return {trackingPoint.x(), areaSize.height() - trackingPoint.y()};
+}
+
+ElementsMetaData::Rect ElementsMetaData::getInletRect() const {
+  return convertRect(inlet);
+}
+
+ElementsMetaData::Rect ElementsMetaData::getOutletRect() const {
+  return convertRect(outlet);
+}
+
+void ElementsMetaData::setTrackingPoint(const RenderArea &area) {
+  this->trackingPoint = area.trackingPoint;
+  validatePoint(this->trackingPoint);
+}
+
+
+QRect ElementsMetaData::validateRect(const QPainterPath *path) {
+  QPoint topLeft = ((QPointF) path->elementAt(0)).toPoint();
+  validatePoint(topLeft);
+  QPoint bottomRight = ((QPointF) path->elementAt(2)).toPoint();
+  validatePoint(bottomRight);
+
+  return QRect(topLeft, bottomRight);
+}
+
+void ElementsMetaData::validatePoint(QPoint &point) {
+  if (point.x() < 0) {
+    point.setX(0);
+  } else if (point.x() >= areaSize.width()) {
+    point.setX(areaSize.width() - 1);
+  }
+
+  if (point.y() < 0) {
+    point.setY(0);
+  } else if (point.y() >= areaSize.height()) {
+    point.setY(areaSize.height() - 1);
+  }
+}
+
+ElementsMetaData::Rect ElementsMetaData::convertRect(const QRect &rect) const {
+  Point topLeft = {rect.topLeft().x(), areaSize.height() - rect.topLeft().y()};
+  Point bottomRight = {rect.bottomRight().x(), areaSize.height() - rect.bottomRight().y()};
+  return {topLeft, bottomRight};
 }
