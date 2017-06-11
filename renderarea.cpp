@@ -50,6 +50,14 @@ void RenderArea::onMousePress(QMouseEvent *e) {
       shapes.push_back(outlet);
       break;
     }
+    case POINT_PAINTER: {
+      trackingEllipse = startPath(trackingEllipse, mousePos);
+      if (!trackingEllipse) return;
+      trackingEllipse->addEllipse(mousePos, 5, 5);
+      shapes.push_back(trackingEllipse);
+      trackingPoint = mousePos;
+      break;
+    }
   }
   update();
   e->accept();
@@ -101,6 +109,10 @@ void RenderArea::chooseOutletPainter() {
   toolType = OUTLET_PAINTER;
 }
 
+void RenderArea::choosePointPainter() {
+  toolType = POINT_PAINTER;
+}
+
 void RenderArea::paintEvent(QPaintEvent *e) {
   QColor workspaceColor(Qt::white);
   QPainter painter(this);
@@ -111,6 +123,8 @@ void RenderArea::paintEvent(QPaintEvent *e) {
       painter.setBrush(Qt::red);
     } else if (pShape == outlet) {
       painter.setBrush(Qt::yellow);
+    } else if (pShape == trackingEllipse) {
+      painter.setBrush(Qt::green);
     } else {
       painter.setBrush(Qt::blue);
     }
@@ -131,13 +145,15 @@ void RenderArea::mouseMoveEvent(QMouseEvent *e) {
 }
 
 void RenderArea::mouseReleaseEvent(QMouseEvent *e) {
-  if (toolType == WALL_PAINTER) return;
   QPainterPath *currentShape;
   if (toolType == INLET_PAINTER) {
     currentShape = inlet;
-  } else {
+  } else if (toolType == OUTLET_PAINTER) {
     currentShape = outlet;
+  } else {
+    return;
   }
+
   if (!currentShape) return;
 
   QPoint mousePos = mapFromGlobal(e->globalPos());

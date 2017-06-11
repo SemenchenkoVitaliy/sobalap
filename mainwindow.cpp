@@ -68,10 +68,16 @@ void MainWindow::createActions() {
   connect(outletPainterAction, SIGNAL(triggered()), renderArea, SLOT(chooseOutletPainter()));
   connect(outletPainterAction, SIGNAL(triggered()), renderArea, SLOT(closeShape()));
 
+  trackingPointPainterAction = new QAction("Track point", this);
+  trackingPointPainterAction->setCheckable(true);
+  connect(trackingPointPainterAction, SIGNAL(triggered()), renderArea, SLOT(choosePointPainter()));
+  connect(trackingPointPainterAction, SIGNAL(triggered()), renderArea, SLOT(closeShape()));
+
   toolsActionGroup = new QActionGroup(this);
   toolsActionGroup->addAction(wallPainterAction);
   toolsActionGroup->addAction(inletPainterAction);
   toolsActionGroup->addAction(outletPainterAction);
+  toolsActionGroup->addAction(trackingPointPainterAction);
   wallPainterAction->setChecked(true);
 }
 
@@ -87,6 +93,7 @@ void MainWindow::createMenu() {
   toolsMenu->addAction(wallPainterAction);
   toolsMenu->addAction(inletPainterAction);
   toolsMenu->addAction(outletPainterAction);
+  toolsMenu->addAction(trackingPointPainterAction);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e) {
@@ -94,10 +101,6 @@ void MainWindow::mousePressEvent(QMouseEvent *e) {
     renderArea->onMousePress(e);
     e->accept();
   }
-}
-
-void MainWindow::mouseMoveEvent(QMouseEvent *e) {
-  //renderArea->onMouseMove(e);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e) {

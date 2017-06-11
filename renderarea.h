@@ -21,6 +21,7 @@ class RenderArea : public QWidget {
   void chooseWallPainter();
   void chooseInletPainter();
   void chooseOutletPainter();
+  void choosePointPainter();
 
  signals:
   void redoEnabled(bool);
@@ -37,12 +38,15 @@ class RenderArea : public QWidget {
   enum ToolType {
     WALL_PAINTER, // 0
     INLET_PAINTER,
-    OUTLET_PAINTER
+    OUTLET_PAINTER,
+    POINT_PAINTER
   };
   QVector<QPainterPath *> shapes;
   QVector<QPainterPath *> redoStack;
   QPainterPath *inlet;
   QPainterPath *outlet;
+  QPainterPath *trackingEllipse;
+  QPoint trackingPoint;
   bool isDrawingWall;
   bool redoFlag;
   ToolType toolType;

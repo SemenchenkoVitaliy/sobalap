@@ -15,7 +15,6 @@ class MainWindow : public QMainWindow {
 
  protected:
   void mousePressEvent(QMouseEvent *e);
-  void mouseMoveEvent(QMouseEvent *e);
   void keyPressEvent(QKeyEvent *e);
 
  private slots:
@@ -32,6 +31,7 @@ class MainWindow : public QMainWindow {
   QAction *wallPainterAction;
   QAction *inletPainterAction;
   QAction *outletPainterAction;
+  QAction *trackingPointPainterAction;
   QAction *calculateAction;
   QAction *undoAction;
   QAction *redoAction;
