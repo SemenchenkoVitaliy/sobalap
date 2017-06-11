@@ -13,16 +13,9 @@ class CalculateDialog : public QDialog {
  public:
   explicit CalculateDialog(QWidget *parent = 0);
   ~CalculateDialog();
-  QString getVelocityInput() const;
-  QString getDirectionInput() const;
-  QString getPressureInput() const;
   QString getTimeInput() const;
   QString getIntervalInput() const;
   void resetInput();
-
- private slots:
-  void chooseVelocity();
-  void choosePressure();
 
  private:
   Ui::CalculateDialog *ui;
