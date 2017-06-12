@@ -72,13 +72,15 @@ class ElementsMetaData {
     Point bottomRight;
   };
 
-  ElementsMetaData(const RenderArea &renderArea, double time, double interval);
+  ElementsMetaData(const RenderArea &renderArea, double time,
+                   double interval, bool velocityChecked);
   bool contains(int x, int y);
   double getTime() const;
   double getInterval() const;
   Point getTrackingPoint() const;
   Rect getInletRect() const;
   Rect getOutletRect() const;
+  bool isVelocityChecked() const;
 
  private:
   void setTrackingPoint(const RenderArea &area);
@@ -93,6 +95,7 @@ class ElementsMetaData {
   double time;
   double interval;
   QSize areaSize;
+  bool velocityChecked;
 };
 
 #endif // RENDERAREA_H_

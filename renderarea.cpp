@@ -208,7 +208,9 @@ QPainterPath *RenderArea::startPath(QPainterPath *prevPath, const QPoint &pos) {
 }
 
 
-ElementsMetaData::ElementsMetaData(const RenderArea &renderArea, double time, double interval) {
+ElementsMetaData::ElementsMetaData(const RenderArea &renderArea, double time,
+                                   double interval, bool velocityChecked) {
+  this->velocityChecked = velocityChecked;
   this->time = time;
   this->interval = interval;
   this->areaSize = renderArea.size();
@@ -247,6 +249,10 @@ ElementsMetaData::Rect ElementsMetaData::getInletRect() const {
 
 ElementsMetaData::Rect ElementsMetaData::getOutletRect() const {
   return convertRect(outlet);
+}
+
+bool ElementsMetaData::isVelocityChecked() const {
+
 }
 
 void ElementsMetaData::setTrackingPoint(const RenderArea &area) {

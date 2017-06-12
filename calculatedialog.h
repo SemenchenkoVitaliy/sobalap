@@ -16,6 +16,7 @@ class CalculateDialog : public QDialog {
   QString getTimeInput() const;
   QString getIntervalInput() const;
   void resetInput();
+  bool isVelocity() const;
 
  private:
   Ui::CalculateDialog *ui;

@@ -23,3 +23,7 @@ void CalculateDialog::resetInput() {
   ui->timeEdit->clear();
   ui->intervalEdit->clear();
 }
+
+bool CalculateDialog::isVelocity() const {
+  return ui->velocityBtn->isChecked();
+}

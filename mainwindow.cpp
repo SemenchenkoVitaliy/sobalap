@@ -62,9 +62,8 @@ void MainWindow::calculate() {
     return;
   }
 
-  ElementsMetaData data(*renderArea, time, interval);
-  qDebug() << "Time: " << data.getTime() << "\t" << "Interval: " << data.getInterval();
-  qDebug() << "Point x = " << data.getTrackingPoint().x << "\t" << "y = " << data.getTrackingPoint().y;
+  bool velocityChecked = calculateDlg->isVelocity();
+  ElementsMetaData data(*renderArea, time, interval, velocityChecked);
 
   // TODO: Send data to palabos
 }
