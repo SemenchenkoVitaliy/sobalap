@@ -74,6 +74,7 @@ class ElementsMetaData {
 
   ElementsMetaData(const RenderArea &renderArea, double time,
                    double interval, bool velocityChecked);
+  ~ElementsMetaData();
   bool contains(int x, int y);
   double getTime() const;
   double getInterval() const;

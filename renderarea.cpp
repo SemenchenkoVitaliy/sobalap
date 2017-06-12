@@ -229,6 +229,7 @@ ElementsMetaData::ElementsMetaData(const RenderArea &renderArea, double time,
   this->time = time;
   this->interval = interval;
   this->areaSize = renderArea.size();
+  walls = new QPainterPath();
   foreach (auto pShape, renderArea.shapes) {
     if (pShape == renderArea.inlet) {
       inlet = validateRect(pShape);
@@ -240,6 +241,10 @@ ElementsMetaData::ElementsMetaData(const RenderArea &renderArea, double time,
       walls->addPath(*pShape);
     }
   }
+}
+
+ElementsMetaData::~ElementsMetaData() {
+  if (walls) delete walls;
 }
 
 bool ElementsMetaData::contains(int x, int y) {
