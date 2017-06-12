@@ -1,4 +1,5 @@
 #include "libr.h"
+
 using namespace plb;
 using namespace plb::descriptors;
 using namespace std;
@@ -126,9 +127,8 @@ void Setup::setOutFileName(string str){
     outFileName = str;
 }
 
-void Setup::exec(){
+void Setup::exec(ElementsMetaData data){
     global::directories().setOutputDir(outDir + PATH_SEPARATOR);
-    plint envelopeWidth = 1;
     IncomprFlowParam<T> parameters(
         (T) 2e-2,  // uMax
         (T) 5.,    // Re
@@ -136,10 +136,38 @@ void Setup::exec(){
         lx,        // lx //change this: lenght
         ly         // ly //change this: heigth
     );
+plint N = 600;
+    plint envelopeWidth = 1;
+    Nx = 800;
+    Ny = 600;
+    SparseBlockStructure2D sparseBlock(Nx+1, Ny+1);
+//    sparseBlock.addBlock(Box2D(0, 100,      0, 600),   sparseBlock.nextIncrementalId());
+//    sparseBlock.addBlock(Box2D(100+1, 500-1, 0, 600/2+1), sparseBlock.nextIncrementalId());
+//    sparseBlock.addBlock(Box2D(500, 800,      0, 600),   sparseBlock.nextIncrementalId());
+            for(plint i = 0; i < Nx; i+=10)
+                for(plint j = 0; j < Ny; j+=10)
+                    if(data.contains(i,j)){//is point in wall
+                        if(i != Nx - 10 && j != Ny - 10) sparseBlock.addBlock(Box2D(i, i + 10, j, j + 10),
+                                                                           sparseBlock.nextIncrementalId());
+                        else if(i != Nx - 10)sparseBlock.addBlock(Box2D(i, i + 10, j, j + 9),
+                                                 sparseBlock.nextIncrementalId());
+                        else if(j != Ny - 10)sparseBlock.addBlock(Box2D(i, i + 9, j, j + 10),
+                                                 sparseBlock.nextIncrementalId());
+                        else sparseBlock.addBlock(Box2D(i, i + 9, j, j + 9),
+                                                 sparseBlock.nextIncrementalId());
+                    }
 
+    // Instantiate the multi-block, based on the created block distribution and
+    //   on default parameters.
     MultiBlockLattice2D<T, DESCRIPTOR> lattice (
-                  parameters.getNx(), parameters.getNy(),
-                  new BGKdynamics<T,DESCRIPTOR>(parameters.getOmega()) );
+        MultiBlockManagement2D (
+            sparseBlock,
+            defaultMultiBlockPolicy2D().getThreadAttribution(), envelopeWidth ),
+        defaultMultiBlockPolicy2D().getBlockCommunicator(),
+        defaultMultiBlockPolicy2D().getCombinedStatistics(),
+        defaultMultiBlockPolicy2D().getMultiCellAccess<T,DESCRIPTOR>(),
+        new BGKdynamics<T,DESCRIPTOR>(parameters.getOmega())
+    );
 
     OnLatticeBoundaryCondition2D<T,DESCRIPTOR>*
         boundaryCondition = createLocalBoundaryCondition2D<T,DESCRIPTOR>();
@@ -196,16 +224,8 @@ void Setup::exec(){
 //        if (errorRm != 0) plbWarning("Error in removing temporary ppm file.");
 }
 
-SparseBlockStructure2D Setup::sparseSetup(){
+SparseBlockStructure2D Setup::sparseSetup(ElementsMetaData data){
     SparseBlockStructure2D sparseBlock(Nx, Ny);
-//    for(plint i = 0; i < Nx/10; i++)
-//        for(plint j = 0; j < Ny/10; j++)
-//            if(true){//is point in wall
-//                if(i != Nx/10 - 1) sparseBlock.addBlock(Box2D(Nx*i/n, Nx*(i+1)/n - 1, Ny*j/n, Ny*(j + 1)/n - 1),
-//                                          sparseBlock.nextIncrementalId());
-//                else sparseBlock.addBlock(Box2D(Nx*i/n, Nx*(i+1)/n, Ny*j/n, Ny*(j + 1)/n),
-//                                          sparseBlock.nextIncrementalId());
-//            }
     sparseBlock.addBlock(Box2D(0, 600, 0, 800),
                                sparseBlock.nextIncrementalId());
 

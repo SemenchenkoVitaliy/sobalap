@@ -2,8 +2,10 @@
 #define MAINWINDOW_H_
 
 #include <QMainWindow>
+#include <QActionGroup>
 #include "renderarea.h"
 #include "calculatedialog.h"
+#include "libr.h"
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -14,7 +16,6 @@ class MainWindow : public QMainWindow {
 
  protected:
   void mousePressEvent(QMouseEvent *e);
-  void mouseMoveEvent(QMouseEvent *e);
   void keyPressEvent(QKeyEvent *e);
 
  private slots:
@@ -25,8 +26,17 @@ class MainWindow : public QMainWindow {
   void createMenu();
 
   QMenu *palabosMenu;
-  RenderArea *renderArea;
+  QMenu *editMenu;
+  QMenu *toolsMenu;
+  QActionGroup *toolsActionGroup;
+  QAction *wallPainterAction;
+  QAction *inletPainterAction;
+  QAction *outletPainterAction;
+  QAction *trackingPointPainterAction;
   QAction *calculateAction;
+  QAction *undoAction;
+  QAction *redoAction;
+  RenderArea *renderArea;
   CalculateDialog *calculateDlg;
 };
 

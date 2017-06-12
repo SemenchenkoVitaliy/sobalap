@@ -21,13 +21,13 @@
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
-    <widget class="QGroupBox" name="radioGroup">
+    <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string/>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QRadioButton" name="velocityRadio">
+       <widget class="QRadioButton" name="velocityBtn">
         <property name="text">
          <string>Velocity</string>
         </property>
@@ -37,7 +37,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="pressureRadio">
+       <widget class="QRadioButton" name="pressureBtn">
         <property name="text">
          <string>Pressure</string>
         </property>
@@ -47,53 +47,39 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="directionLabel">
+    <widget class="QLabel" name="timeLabel">
      <property name="text">
-      <string>Velocity direction:</string>
+      <string>Flow time:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="directionEdit"/>
+    <widget class="QLineEdit" name="timeEdit"/>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="velocityValueLabel">
+    <widget class="QLabel" name="intervalLabel">
      <property name="text">
-      <string>Velociry value:</string>
+      <string>Interval:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="velocityEdit"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="presureLabel">
-     <property name="text">
-      <string>Pressure value:</string>
-     </property>
-    </widget>
+    <widget class="QLineEdit" name="intervalEdit"/>
    </item>
    <item row="3" column="1">
-    <widget class="QLineEdit" name="presureEdit">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>190</width>
+       <width>20</width>
        <height>40</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="6" column="1">
+   <item row="4" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
