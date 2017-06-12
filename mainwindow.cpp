@@ -7,6 +7,9 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QDebug>
+#include <QFutureWatcher>
+#include <QtConcurrent>
+#include <QFuture>
 
 MainWindow::MainWindow(QWidget *parent)
   : QMainWindow(parent) {
@@ -83,7 +86,17 @@ void MainWindow::calculate() {
   obj->setSizes(8., 6.);
   obj->setOutDir(".\\tmp");
   obj->setOutFileName("result.gif");
-  obj->exec(data);
+
+  // run in separate thread
+  QFutureWatcher<Void> resultWatcher;
+  connect(&resultWatcher, SIGNAL(finished()), this, SLOT(onCalculationFinished()));
+
+  QFuture<Void> result = QtConcurrent::run([&obj]() { obj->exec(data); });
+  resultWatcher.setFuture(result);
+}
+
+void MainWindow::onCalculationFinished() {
+  // TODO do all the work needed after palabos finished rendering
 }
 
 void MainWindow::createActions() {

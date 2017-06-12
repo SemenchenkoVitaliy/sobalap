@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow {
 
  private slots:
   void calculate();
+  void onCalculationFinished();
 
  private:
   void createActions();
