@@ -65,7 +65,25 @@ void MainWindow::calculate() {
   bool velocityChecked = calculateDlg->isVelocity();
   ElementsMetaData data(*renderArea, time, interval, velocityChecked);
 
-  // TODO: Send data to palabos
+  Setup* obj = new Setup();
+  obj->setInlet(data.getInletRect().topLeft.x,
+                data.getInletRect().bottomRight.y,
+                data.getInletRect().bottomRight.x,
+                data.getInletRect().topLeft.y);
+  obj->setOutlet(data.getOutletRect().topLeft.x,
+                 data.getOutletRect().bottomRight.y,
+                 data.getOutletRect().bottomRight.x,
+                 data.getOutletRect().topLeft.y);
+  obj->setCalcPoint(data.getTrackingPoint().x, data.getTrackingPoint().y);
+  if(velocityChecked)
+      obj->setInletOutlet("velocity");
+  else
+      obj->setInletOutlet("pressure");
+  obj->setTimeInterval(data.getTime(), data.getInterval());
+  obj->setSizes(8., 6.);
+  obj->setOutDir(".\\tmp");
+  obj->setOutFileName("result.gif");
+  obj->exec(data);
 }
 
 void MainWindow::createActions() {

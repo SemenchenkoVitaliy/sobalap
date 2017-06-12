@@ -298,13 +298,13 @@ void ElementsMetaData::validatePoint(QPoint &point) {
   if (point.x() < 0) {
     point.setX(0);
   } else if (point.x() >= areaSize.width()) {
-    point.setX(areaSize.width() - 1);
+    point.setX(areaSize.width());
   }
 
   if (point.y() < 0) {
     point.setY(0);
   } else if (point.y() >= areaSize.height()) {
-    point.setY(areaSize.height() - 1);
+    point.setY(areaSize.height());
   }
 }
 

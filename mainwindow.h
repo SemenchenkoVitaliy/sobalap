@@ -5,6 +5,7 @@
 #include <QActionGroup>
 #include "renderarea.h"
 #include "calculatedialog.h"
+#include "libr.h"
 
 class MainWindow : public QMainWindow {
   Q_OBJECT

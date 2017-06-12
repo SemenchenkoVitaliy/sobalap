@@ -1,6 +1,7 @@
 #ifndef LIBR_H
 #define LIBR_H
 #define PLB_USE_POSIX
+
 #include "palabos2D.h"
 #include "palabos2D.hh"
 #include <vector>
@@ -8,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include "renderarea.h"
 
 using namespace plb;
 using namespace plb::descriptors;
@@ -29,7 +31,7 @@ public:
     void setSizes(double lx, double ly);
     void setOutDir(std::string str);
     void setOutFileName(std::string str);
-    void exec();
+    void exec(ElementsMetaData data);
 private:
     Box2D inlet, outlet;
     plint Nx, Ny;
@@ -38,7 +40,7 @@ private:
     T imSave, maxT, lx, ly;
     std::string outDir, outFileName;
 
-    SparseBlockStructure2D sparseSetup();
+    SparseBlockStructure2D sparseSetup(ElementsMetaData data);
     void channelSetup( MultiBlockLattice2D<T,DESCRIPTOR>& lattice,
                    IncomprFlowParam<T> const& parameters,
                    OnLatticeBoundaryCondition2D<T,DESCRIPTOR>& boundaryCondition);
