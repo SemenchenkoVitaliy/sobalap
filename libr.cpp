@@ -129,7 +129,7 @@ void Setup::setOutFileName(string str){
     outFileName = str;
 }
 
-void Setup::exec(ElementsMetaData data){
+void Setup::exec(ElementsMetaData& data){
     global::directories().setOutputDir(outDir + PATH_SEPARATOR);
     IncomprFlowParam<T> parameters(
         (T) 2e-2,  // uMax

@@ -31,7 +31,7 @@ public:
     void setSizes(double lx, double ly);
     void setOutDir(std::string str);
     void setOutFileName(std::string str);
-    void exec(ElementsMetaData data);
+    void exec(ElementsMetaData& data);
 private:
     Box2D inlet, outlet;
     plint Nx, Ny;
