@@ -188,11 +188,15 @@ void RenderArea::mouseReleaseEvent(QMouseEvent *e) {
       if (currentShape) {
         shapes.removeOne(currentShape);
         if (toolType == INLET_PAINTER) {
-          delete inlet;
-          inlet = nullptr;
+          if (inlet) {
+            delete inlet;
+            inlet = nullptr;
+          }
         } else {
-          delete outlet;
-          outlet = nullptr;
+          if (outlet) {
+            delete outlet;
+            outlet = nullptr;
+          }
         }
       }
       return;
