@@ -32,7 +32,6 @@ void RenderArea::onMousePress(QMouseEvent *e) {
   redoStack.clear();
   redoFlag = false;
   emit redoEnabled(false);
-  emit undoEnabled(true);
 
   QPoint mousePos = mapFromGlobal(e->globalPos());
   switch (toolType) {
@@ -40,6 +39,7 @@ void RenderArea::onMousePress(QMouseEvent *e) {
       foreach (auto pShape, shapes) {
         if (pShape->contains(mousePos)) return;
       }
+      emit undoEnabled(true);
       if (!isDrawingWall) {
         isDrawingWall = true;
         shapes.push_back(new QPainterPath(mousePos));
@@ -51,18 +51,33 @@ void RenderArea::onMousePress(QMouseEvent *e) {
       break;
     }
     case INLET_PAINTER: {
+      if (mousePos.x() < 0 || mousePos.x() > this->width() ||
+          mousePos.y() < 0 || mousePos.y() > this->height()) {
+        return;
+      }
+      emit undoEnabled(true);
       inlet = startPath(inlet, mousePos);
       if (!inlet) return;
       shapes.push_back(inlet);
       break;
     }
     case OUTLET_PAINTER: {
+      if (mousePos.x() < 0 || mousePos.x() > this->width() ||
+          mousePos.y() < 0 || mousePos.y() > this->height()) {
+        break;
+      }
+      emit undoEnabled(true);
       outlet = startPath(outlet, mousePos);
       if (!outlet) return;
       shapes.push_back(outlet);
       break;
     }
     case POINT_PAINTER: {
+      if (mousePos.x() < 0 || mousePos.x() > this->width() ||
+          mousePos.y() < 0 || mousePos.y() > this->height()) {
+        break;
+      }
+      emit undoEnabled(true);
       trackingEllipse = startPath(trackingEllipse, mousePos);
       if (!trackingEllipse) return;
       trackingEllipse->addEllipse(mousePos, 5, 5);
