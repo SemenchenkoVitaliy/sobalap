@@ -75,6 +75,7 @@ void MainWindow::calculate() {
   resultWatcher->setFuture(result);
 
   progress->exec();
+  delete palabosSetup;
 }
 
 void MainWindow::onCalculationFinished() {

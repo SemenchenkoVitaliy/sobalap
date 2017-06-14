@@ -162,6 +162,7 @@ plint N = 600;
 
     // Instantiate the multi-block, based on the created block distribution and
     //   on default parameters.
+            BGKdynamics<T,DESCRIPTOR> dynam(parameters.getOmega());
     MultiBlockLattice2D<T, DESCRIPTOR> lattice (
         MultiBlockManagement2D (
             sparseBlock,
@@ -169,8 +170,7 @@ plint N = 600;
         defaultMultiBlockPolicy2D().getBlockCommunicator(),
         defaultMultiBlockPolicy2D().getCombinedStatistics(),
         defaultMultiBlockPolicy2D().getMultiCellAccess<T,DESCRIPTOR>(),
-        new BGKdynamics<T,DESCRIPTOR>(parameters.getOmega())
-    );
+        &dynam );
 
     OnLatticeBoundaryCondition2D<T,DESCRIPTOR>*
         boundaryCondition = createLocalBoundaryCondition2D<T,DESCRIPTOR>();
