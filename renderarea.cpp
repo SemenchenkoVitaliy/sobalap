@@ -8,7 +8,9 @@
 RenderArea::RenderArea(QWidget *parent)
   : QWidget(parent), isDrawingWall(false), redoFlag(false),
     toolType(WALL_PAINTER) {
-
+    inlet = nullptr;
+    outlet = nullptr;
+    trackingEllipse = nullptr;
 }
 
 RenderArea::~RenderArea() {
@@ -222,6 +224,7 @@ QPainterPath *RenderArea::startPath(QPainterPath *prevPath, const QPoint &pos) {
   if (prevPath) {
     shapes.removeOne(prevPath);
     delete prevPath;
+    prevPath = nullptr;
   }
   return temp;
 }

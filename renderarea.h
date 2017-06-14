@@ -56,7 +56,7 @@ class RenderArea : public QWidget {
   bool redoFlag;
   ToolType toolType;
 
-  friend ElementsMetaData;
+  friend class ElementsMetaData;
 };
 
 class ElementsMetaData {
