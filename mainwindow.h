@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+#include <QProgressDialog>
 #include "renderarea.h"
 #include "calculatedialog.h"
 #include "libr.h"
@@ -25,6 +26,8 @@ class MainWindow : public QMainWindow {
  private:
   void createActions();
   void createMenu();
+  bool isResultCorrect();
+  QProgressDialog *createProgressDialog();
 
   QMenu *palabosMenu;
   QMenu *editMenu;

@@ -38,65 +38,47 @@ void MainWindow::calculate() {
   int dialogResult = calculateDlg->exec();
   if (dialogResult != QDialog::Accepted) return;
 
-  if (!renderArea->hasInlet()) {
-    QMessageBox::critical(this, "Error",
-                          "No inlet area. Please, set the inlet area");
-    return;
-  } else if (!renderArea->hasOutlet()) {
-    QMessageBox::critical(this, "Error",
-                          "No outlet area. Please, set the outlet area");
-    return;
-  } else if (!renderArea->hasTrackingPoint()) {
-    QMessageBox::critical(this, "Error",
-                          "No track point. Please, set the track point");
-    return;
-  }
-
+  if (!isResultCorrect()) return;
   double time = calculateDlg->getTimeInput().toDouble();
-  if (!time) {
-    QMessageBox::critical(this, "Error",
-                          "Incorrect entered time");
-    return;
-  }
   double interval = calculateDlg->getIntervalInput().toDouble();
-  if (!interval || interval > time) {
-    QMessageBox::critical(this, "Error",
-                          "Incorrect entered interval");
-    return;
-  }
-
   bool velocityChecked = calculateDlg->isVelocity();
   ElementsMetaData data(*renderArea, time, interval, velocityChecked);
 
-  Setup* obj = new Setup();
-  obj->setInlet(data.getInletRect().topLeft.x,
+  Setup* palabosSetup = new Setup();
+  palabosSetup->setInlet(data.getInletRect().topLeft.x,
                 data.getInletRect().bottomRight.y,
                 data.getInletRect().bottomRight.x,
                 data.getInletRect().topLeft.y);
-  obj->setOutlet(data.getOutletRect().topLeft.x,
+  palabosSetup->setOutlet(data.getOutletRect().topLeft.x,
                  data.getOutletRect().bottomRight.y,
                  data.getOutletRect().bottomRight.x,
                  data.getOutletRect().topLeft.y);
-  obj->setCalcPoint(data.getTrackingPoint().x, data.getTrackingPoint().y);
-  if(velocityChecked)
-      obj->setInletOutlet("velocity");
-  else
-      obj->setInletOutlet("pressure");
-  obj->setTimeInterval(data.getTime(), data.getInterval());
-  obj->setSizes(8., 6.);
-  obj->setOutDir(".\\tmp");
-  obj->setOutFileName("result.gif");
+  palabosSetup->setCalcPoint(data.getTrackingPoint().x, data.getTrackingPoint().y);
 
-  // run in separate thread
-  QFutureWatcher<Void> resultWatcher;
-  connect(&resultWatcher, SIGNAL(finished()), this, SLOT(onCalculationFinished()));
+  if(velocityChecked) {
+      palabosSetup->setInletOutlet("velocity");
+  } else {
+      palabosSetup->setInletOutlet("pressure");
+  }
+  palabosSetup->setTimeInterval(data.getTime(), data.getInterval());
+  palabosSetup->setSizes(8., 6.);
+  palabosSetup->setOutDir(".\\tmp");
+  palabosSetup->setOutFileName("result.gif");
 
-  QFuture<Void> result = QtConcurrent::run([&obj]() { obj->exec(data); });
-  resultWatcher.setFuture(result);
+  auto progress = this->createProgressDialog();
+
+  auto resultWatcher = new QFutureWatcher<void>(this);
+  connect(resultWatcher, SIGNAL(finished()), progress, SLOT(close()));
+  connect(resultWatcher, SIGNAL(finished()), this, SLOT(onCalculationFinished()));
+
+  QFuture<void> result = QtConcurrent::run([&palabosSetup, &data]() { palabosSetup->exec(data); });
+  resultWatcher->setFuture(result);
+
+  progress->exec();
 }
 
 void MainWindow::onCalculationFinished() {
-  // TODO do all the work needed after palabos finished rendering
+  QMessageBox::information(this, "Result", "Calculations ended");
 }
 
 void MainWindow::createActions() {
@@ -156,6 +138,50 @@ void MainWindow::createMenu() {
   toolsMenu->addAction(inletPainterAction);
   toolsMenu->addAction(outletPainterAction);
   toolsMenu->addAction(trackingPointPainterAction);
+}
+
+bool MainWindow::isResultCorrect() {
+  if (!renderArea->hasInlet()) {
+    QMessageBox::critical(this, "Error",
+                          "No inlet area. Please, set the inlet area");
+    return false;
+  } else if (!renderArea->hasOutlet()) {
+    QMessageBox::critical(this, "Error",
+                          "No outlet area. Please, set the outlet area");
+    return false;
+  } else if (!renderArea->hasTrackingPoint()) {
+    QMessageBox::critical(this, "Error",
+                          "No track point. Please, set the track point");
+    return false;
+  }
+
+  double time = calculateDlg->getTimeInput().toDouble();
+  if (!time) {
+    QMessageBox::critical(this, "Error",
+                          "Incorrect entered time");
+    return false;
+  }
+  double interval = calculateDlg->getIntervalInput().toDouble();
+  if (!interval || interval > time) {
+    QMessageBox::critical(this, "Error",
+                          "Incorrect entered interval");
+    return false;
+  }
+
+  return true;
+}
+
+QProgressDialog *MainWindow::createProgressDialog() {
+  auto *progress = new QProgressDialog(this);
+  progress->setWindowTitle("Polabos");
+  progress->setLabelText("Operation in progress. Please wait...");
+  progress->setValue(0);
+  progress->setMaximum(0);
+  progress->setMinimum(0);
+  progress->setModal(true);
+  progress->setCancelButton(0);
+  progress->setWindowFlags(progress->windowFlags() & ~Qt::WindowCloseButtonHint);
+  return progress;
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e) {
