@@ -33,7 +33,7 @@ struct ei_L2_block_traits {
 #ifndef EIGEN_EXTERN_INSTANTIATIONS
 
 template<typename Scalar>
-static void ei_cache_friendly_product(
+void ei_cache_friendly_product(
   int _rows, int _cols, int depth,
   bool _lhsRowMajor, const Scalar* _lhs, int _lhsStride,
   bool _rhsRowMajor, const Scalar* _rhs, int _rhsStride,

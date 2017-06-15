@@ -354,7 +354,7 @@ SavedFullMultiBlockSerializer3D::SavedFullMultiBlockSerializer3D (
 {  
     if (global::mpi().isMainProcessor()) {
         fp = fopen(data_fName.get().c_str(), "rb");
-#if defined PLB_MAC_OS_X || defined PLB_BSD
+#if defined PLB_MAC_OS_X || defined PLB_BSD || defined __APPLE__
         fseek(fp, (long int)pos, SEEK_SET);
 #else
         fseeko64(fp, pos, SEEK_SET);

@@ -113,7 +113,7 @@ void writeRawData_posix( FileName fName, std::vector<plint> const& myBlockIds,
                     PLB_ASSERT( offset[blockId]-offset[blockId-1] == (plint)data[iBlock].size() );
                     nextOffset = offset[blockId-1];
                 }
-#if defined PLB_MAC_OS_X || defined PLB_BSD
+#if defined PLB_MAC_OS_X || defined PLB_BSD || defined __APPLE__
                 int fSeekVal = fseek(fp, (long int)nextOffset, SEEK_SET);
 #else
                 int fSeekVal = fseeko64(fp, nextOffset, SEEK_SET);
@@ -226,7 +226,8 @@ void loadRawData_posix( FileName fName, std::vector<plint> const& myBlockIds,
                     nextOffset = offset[blockId-1];
                 }
                 data[iBlock].resize(nextSize);
-#if defined PLB_MAC_OS_X || defined PLB_BSD
+#if defined PLB_MAC_OS_X || defined PLB_BSD || defined __APPLE__
+
                 int fSeekVal = fseek(fp, (long int)nextOffset, SEEK_SET);
 #else
                 int fSeekVal = fseeko64(fp, nextOffset, SEEK_SET);
