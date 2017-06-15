@@ -204,7 +204,7 @@ plint N = 600;
     delete boundaryCondition;
 
     std::stringstream imStream;
-    imStream << "convert -delay " << imSave * 100 << " \""
+    imStream << "magick convert -delay " << imSave * 100 << " \""
              << global::directories().getImageOutDir()
              << "*.ppm\" \""
              << global::directories().getImageOutDir()
